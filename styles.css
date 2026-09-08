@@ -44,7 +44,8 @@ section {
   min-height: min(760px, calc(100vh - 78px));
   padding-block: clamp(3rem, 7vw, 7rem);
   overflow: hidden;
-  background: var(--yellow, #ffd429);
+  background: #E33426;
+  color: #F6F0E8;
 }
 
 .hero .container {
@@ -65,7 +66,8 @@ section {
   margin-bottom: 1.25rem;
   padding: 0.35rem 0.6rem;
   border: 2px solid var(--ink);
-  background: var(--cream);
+  background: var(--blue);
+  color: #F6F0E8;
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -84,7 +86,7 @@ section {
 }
 
 .hero h1::first-line {
-  color: var(--red);
+  color: #F6F0E8;
 }
 
 .hero__intro {
@@ -118,12 +120,14 @@ section {
 }
 
 .hero__button--primary {
-  background: var(--red);
-  color: var(--cream);
+  background: var(--blue);
+  color: #F6F0E8;
 }
 
 .hero__button--secondary {
-  background: var(--cream);
+  border-color: #F6F0E8;
+  background: transparent;
+  color: #F6F0E8;
 }
 
 .hero__button:hover,
@@ -150,7 +154,7 @@ section {
   background-color: #f76582;
   background-image: radial-gradient(var(--cream) 18%, transparent 19%);
   background-size: 22px 22px;
-  color: var(--cream);
+  color: #F6F0E8;
   font-size: clamp(1rem, 2vw, 1.4rem);
   font-weight: 900;
   letter-spacing: -0.04em;
@@ -214,7 +218,7 @@ section {
   bottom: 1.7rem;
   width: 7.5rem;
   margin: 0;
-  color: var(--cream);
+  color: #F6F0E8;
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.03em;
@@ -1162,16 +1166,16 @@ section {
 
 .site-logo {
   flex: 0 0 auto;
-  color: var(--red);
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-  font-weight: 900;
-  letter-spacing: -0.08em;
-  line-height: 1;
+  display: block;
+  width: 3rem;
   text-decoration: none;
 }
 
-.site-logo span {
-  color: var(--blue);
+.site-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .main-nav ul {
@@ -1271,6 +1275,10 @@ p {
 }
 
 @media (max-width: 900px) {
+  .site-logo {
+    width: 2.5rem;
+  }
+
   .hero {
     min-height: auto;
     padding-block: 3rem 4.5rem;
