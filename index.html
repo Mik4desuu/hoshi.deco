@@ -162,90 +162,95 @@
             <a class="favorites__all-link" href="#catalogo">Ver todo <span aria-hidden="true">→</span></a>
           </div>
 
-          <div class="favorites__grid">
-            <article class="product-card product-card--brick">
-              <div class="product-card__image">
-                <span class="product-card__image-label">Foto Florero Brick</span>
-                <span class="product-card__shape" aria-hidden="true"></span>
-              </div>
-              <div class="product-card__info">
-                <h3>Florero Brick</h3>
-                <p class="product-card__price">$850 <span>UYU</span></p>
-                <p class="product-card__colors"><strong>Colores:</strong> rojo, azul, rosa</p>
-                <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-
-            <article class="product-card product-card--pop">
-              <div class="product-card__image">
-                <span class="product-card__image-label">Foto Portarrollos Pop</span>
-                <span class="product-card__shape" aria-hidden="true"></span>
-              </div>
-              <div class="product-card__info">
-                <h3>Portarrollos Pop</h3>
-                <p class="product-card__price">$990 <span>UYU</span></p>
-                <p class="product-card__colors"><strong>Colores:</strong> amarillo, azul, verde</p>
-                <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-
-            <article class="product-card product-card--wave">
-              <div class="product-card__image">
-                <span class="product-card__image-label">Foto Tapa de luz Wave</span>
-                <span class="product-card__shape" aria-hidden="true"></span>
-              </div>
-              <div class="product-card__info">
-                <h3>Tapa de luz Wave</h3>
-                <p class="product-card__price">$590 <span>UYU</span></p>
-                <p class="product-card__colors"><strong>Colores:</strong> crema, rojo, rosa</p>
-                <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-
-            <article class="product-card product-card--paint">
-              <div class="product-card__image">
-                <span class="product-card__image-label">Foto Espejo Paint</span>
-                <span class="product-card__shape" aria-hidden="true"></span>
-              </div>
-              <div class="product-card__info">
-                <h3>Espejo Paint</h3>
-                <p class="product-card__price">$2490 <span>UYU</span></p>
-                <p class="product-card__colors"><strong>Colores:</strong> azul, verde, amarillo</p>
-                <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-          </div>
+          <div class="favorites__grid" id="featured-products-grid"></div>
         </div>
       </section>
 
       <section class="quote-banner" aria-labelledby="quote-banner-title">
         <div class="container">
-          <p id="quote-banner-title">Un hogar para vivirlo a todo color.</p>
+          <p id="quote-banner-title">Objetos para casas que no quieren ser aburridas</p>
+          <a class="quote-banner__link" href="#catalogo">
+            Ver todos los productos <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
 
       <section class="new-arrivals" id="novedades" aria-labelledby="new-arrivals-title">
         <div class="container">
-          <h2 id="new-arrivals-title">Novedades</h2>
+          <div class="section-heading">
+            <p class="section-heading__eyebrow">Recién llegados</p>
+            <h2 id="new-arrivals-title">Novedades</h2>
+          </div>
+          <div class="product-list product-list--new" id="new-products-grid"></div>
         </div>
       </section>
 
       <section class="catalog" id="catalogo" aria-labelledby="catalog-title">
         <div class="container">
-          <h2 id="catalog-title">Catálogo</h2>
+          <div class="section-heading">
+            <p class="section-heading__eyebrow">Todo lo que hay para mirar</p>
+            <h2 id="catalog-title">Catálogo</h2>
+          </div>
+          <div class="catalog-filters" aria-label="Filtrar productos por categoría">
+            <button class="catalog-filter is-active" type="button" data-category="todos" aria-pressed="true">Todos</button>
+            <button class="catalog-filter" type="button" data-category="floreros" aria-pressed="false">Floreros</button>
+            <button class="catalog-filter" type="button" data-category="baño" aria-pressed="false">Baño</button>
+            <button class="catalog-filter" type="button" data-category="espejos" aria-pressed="false">Espejos</button>
+            <button class="catalog-filter" type="button" data-category="objetos" aria-pressed="false">Objetos</button>
+            <button class="catalog-filter" type="button" data-category="regalos" aria-pressed="false">Regalos</button>
+          </div>
+          <div class="product-list product-list--catalog" id="catalog-products-grid"></div>
         </div>
       </section>
 
       <section class="about" id="sobre-hoshi" aria-labelledby="about-title">
         <div class="container">
-          <h2 id="about-title">Sobre Hoshi</h2>
+          <div class="about__content">
+            <div class="about__copy">
+              <p class="about__eyebrow">Sobre Hoshi</p>
+              <h2 id="about-title">
+                Hoshi.deco nace para llenar los espacios de objetos que tengan personalidad.
+              </h2>
+              <p class="about__body">
+                Diseñamos y producimos piezas decorativas con color, humor y un poco de
+                nostalgia.
+              </p>
+              <p class="about__statement">Nosotros hacemos objetos. Vos hacés la escena.</p>
+            </div>
+
+            <div class="about__visual" aria-label="Espacio para imagen editorial de Hoshi.deco">
+              <div class="about__image-placeholder">
+                <span>Imagen<br />Hoshi.deco</span>
+              </div>
+              <span class="about__shape about__shape--circle" aria-hidden="true"></span>
+              <span class="about__shape about__shape--star" aria-hidden="true">✦</span>
+              <span class="about__shape about__shape--stripe" aria-hidden="true"></span>
+            </div>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer" id="contacto">
       <div class="container">
-        <p>Hoshi.deco</p>
+        <div class="site-footer__top">
+          <a class="site-footer__logo" href="#inicio" aria-label="Hoshi.deco, ir al inicio">
+            HOSHI<span>.</span>DECO
+          </a>
+          <p class="site-footer__made-in">Hecho en Uruguay <span aria-hidden="true">✦</span></p>
+        </div>
+
+        <p class="site-footer__statement">Tu casa puede ser más divertida.</p>
+
+        <div class="site-footer__bottom">
+          <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram ↗</a>
+            <a href="https://wa.me/" target="_blank" rel="noreferrer">WhatsApp ↗</a>
+            <a href="#catalogo">Catálogo</a>
+            <a href="#sobre-hoshi">Sobre Hoshi</a>
+          </nav>
+          <p class="site-footer__copyright">© Hoshi.deco</p>
+        </div>
       </div>
     </footer>
   </body>
