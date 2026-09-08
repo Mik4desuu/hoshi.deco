@@ -221,6 +221,179 @@ section {
   transform: rotate(-8deg);
 }
 
+.categories {
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+  background: var(--cream);
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 680px) 1fr;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.section-heading__eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+  color: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+  font-size: clamp(2.3rem, 5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.categories__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+.category-card {
+  position: relative;
+  display: block;
+  min-height: 24rem;
+  padding: 1.15rem;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.category-card--vases {
+  grid-column: span 5;
+  background: var(--red);
+  transform: rotate(-1.2deg);
+}
+
+.category-card--bath {
+  grid-column: span 7;
+  background: var(--blue);
+  color: var(--cream);
+  transform: rotate(0.8deg);
+}
+
+.category-card--mirrors {
+  grid-column: span 4;
+  min-height: 20rem;
+  background: #f77eb0;
+  transform: rotate(1deg);
+}
+
+.category-card--objects {
+  grid-column: span 5;
+  min-height: 20rem;
+  background: #52b64f;
+  transform: rotate(-0.7deg);
+}
+
+.category-card--gifts {
+  grid-column: span 3;
+  min-height: 20rem;
+  background: var(--yellow, #ffd429);
+  transform: rotate(1.5deg);
+}
+
+.category-card__number {
+  position: relative;
+  z-index: 2;
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.category-card__image {
+  position: absolute;
+  top: 13%;
+  right: 10%;
+  bottom: 19%;
+  left: 10%;
+  display: grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  background: rgba(255, 245, 223, 0.28);
+  transform: rotate(-5deg);
+}
+
+.category-card--bath .category-card__image {
+  background: rgba(255, 245, 223, 0.18);
+  border-radius: 50% 50% 10% 10%;
+  transform: rotate(4deg);
+}
+
+.category-card--mirrors .category-card__image {
+  border-radius: 50%;
+}
+
+.category-card--objects .category-card__image {
+  border-radius: 46% 12% 40% 14%;
+  transform: rotate(8deg);
+}
+
+.category-card--gifts .category-card__image {
+  inset: 20% 13% 23%;
+  border-style: dashed;
+  transform: rotate(-8deg);
+}
+
+.category-card__image-label {
+  max-width: 7rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.category-card__title {
+  position: absolute;
+  z-index: 2;
+  right: 1rem;
+  bottom: 3.65rem;
+  left: 1rem;
+  font-size: clamp(2.1rem, 4vw, 4.3rem);
+  font-weight: 900;
+  letter-spacing: -0.1em;
+  line-height: 0.8;
+  text-transform: uppercase;
+}
+
+.category-card__link {
+  position: absolute;
+  z-index: 2;
+  bottom: 1.15rem;
+  left: 1.15rem;
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid currentColor;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.category-card:hover,
+.category-card:focus-visible {
+  z-index: 3;
+  outline: none;
+  transform: translate(-4px, -4px) rotate(0deg);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
 .site-header {
   position: relative;
   z-index: 10;
@@ -375,6 +548,42 @@ p {
     right: -2.8rem;
   }
 
+  .section-heading {
+    display: block;
+  }
+
+  .section-heading__eyebrow {
+    margin-bottom: 0.65rem;
+  }
+
+  .categories__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .category-card,
+  .category-card--vases,
+  .category-card--bath,
+  .category-card--mirrors,
+  .category-card--objects,
+  .category-card--gifts {
+    grid-column: span 1;
+    min-height: 18rem;
+  }
+
+  .category-card--bath {
+    transform: rotate(1deg);
+  }
+
+  .category-card--gifts {
+    grid-column: 1 / -1;
+    min-height: 15rem;
+  }
+
+  .category-card__title {
+    font-size: clamp(2rem, 10vw, 3.6rem);
+  }
+
   .site-header .container {
     display: grid;
     grid-template-columns: 1fr auto auto;
@@ -439,5 +648,15 @@ p {
 
   .hero__sticker--smile {
     left: -1.2rem;
+  }
+
+  .categories__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-card,
+  .category-card--gifts {
+    grid-column: 1;
+    min-height: 17rem;
   }
 }
