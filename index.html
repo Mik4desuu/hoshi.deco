@@ -15,23 +15,86 @@
     <header class="site-header">
       <div class="container">
         <a class="site-logo" href="#inicio" aria-label="Hoshi.deco, ir al inicio">
-          Hoshi.deco
+          HOSHI<span>.</span>DECO
         </a>
 
-        <nav class="main-nav" aria-label="Navegación principal">
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span class="sr-only">Abrir menú</span>
+          <span class="menu-toggle__line"></span>
+          <span class="menu-toggle__line"></span>
+          <span class="menu-toggle__line"></span>
+        </button>
+
+        <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
           <ul>
-            <li><a href="#categorias">Categorías</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
+            <li><a href="#novedades">Novedades</a></li>
             <li><a href="#sobre-hoshi">Sobre Hoshi</a></li>
+            <li><a href="#contacto">Contacto</a></li>
           </ul>
         </nav>
+
+        <div class="header-socials">
+          <a
+            class="social-link social-link--instagram"
+            href="https://www.instagram.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Visitar Instagram de Hoshi.deco"
+          >
+            IG
+          </a>
+          <a
+            class="social-link social-link--whatsapp"
+            href="https://wa.me/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp ↗
+          </a>
+        </div>
       </div>
     </header>
 
     <main>
       <section class="hero" id="inicio" aria-labelledby="hero-title">
         <div class="container">
-          <h1 id="hero-title">Decoración con mucha personalidad</h1>
+          <div class="hero__content">
+            <p class="hero__eyebrow">Hogar, pero jamás aburrido</p>
+            <h1 id="hero-title">Ser aburrido no combina con tu casa</h1>
+            <p class="hero__intro">
+              Objetos con color, humor y personalidad para hacer tu espacio un poco
+              más vos.
+            </p>
+            <div class="hero__actions">
+              <a class="hero__button hero__button--primary" href="#catalogo">
+                Ver catálogo <span aria-hidden="true">→</span>
+              </a>
+              <a
+                class="hero__button hero__button--secondary"
+                href="https://wa.me/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Hablar por WhatsApp <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero__visual" aria-label="Espacio para fotografía lifestyle de Hoshi.deco">
+            <div class="hero__photo-placeholder">
+              <span>Foto lifestyle<br />de producto</span>
+            </div>
+            <span class="hero__sticker hero__sticker--star" aria-hidden="true">✦</span>
+            <span class="hero__sticker hero__sticker--smile" aria-hidden="true">☺</span>
+            <span class="hero__scribble" aria-hidden="true"></span>
+            <p class="hero__visual-note">Tu casa, tus reglas.</p>
+          </div>
         </div>
       </section>
 
@@ -53,7 +116,7 @@
         </div>
       </section>
 
-      <section class="new-arrivals" aria-labelledby="new-arrivals-title">
+      <section class="new-arrivals" id="novedades" aria-labelledby="new-arrivals-title">
         <div class="container">
           <h2 id="new-arrivals-title">Novedades</h2>
         </div>
@@ -72,7 +135,7 @@
       </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer" id="contacto">
       <div class="container">
         <p>Hoshi.deco</p>
       </div>
