@@ -14,7 +14,6 @@ const productos = [
     colores: ['Rojo', 'Azul', 'Rosa'],
     descripcion: 'Un florero con silueta de bloque para flores con actitud.',
     destacado: true,
-    nuevo: false,
   },
   {
     id: 'portarrollos-pop',
@@ -25,7 +24,6 @@ const productos = [
     colores: ['Amarillo', 'Azul', 'Verde'],
     descripcion: 'El detalle inesperado para hacer del baño un lugar más divertido.',
     destacado: true,
-    nuevo: true,
   },
   {
     id: 'tapa-luz-wave',
@@ -36,7 +34,6 @@ const productos = [
     colores: ['Crema', 'Rojo', 'Rosa'],
     descripcion: 'Una ola de color para los rincones que suelen pasar desapercibidos.',
     destacado: true,
-    nuevo: false,
   },
   {
     id: 'espejo-paint',
@@ -47,7 +44,6 @@ const productos = [
     colores: ['Azul', 'Verde', 'Amarillo'],
     descripcion: 'Un espejo que también funciona como una pequeña pieza de arte.',
     destacado: true,
-    nuevo: true,
   },
   {
     id: 'florero-twist',
@@ -58,7 +54,6 @@ const productos = [
     colores: ['Rosa', 'Crema', 'Verde'],
     descripcion: 'Curvas, color y un lugar perfecto para tus flores favoritas.',
     destacado: false,
-    nuevo: true,
   },
   {
     id: 'jabonera-bubble',
@@ -69,7 +64,6 @@ const productos = [
     colores: ['Azul', 'Rosa', 'Amarillo'],
     descripcion: 'Una jabonera con burbujas para darle onda a la rutina.',
     destacado: false,
-    nuevo: true,
   },
   {
     id: 'portavelas-disco',
@@ -80,7 +74,6 @@ const productos = [
     colores: ['Rojo', 'Amarillo', 'Crema'],
     descripcion: 'Para encender una luz suave, colorida y muy Hoshi.',
     destacado: false,
-    nuevo: false,
   },
   {
     id: 'espejo-splash',
@@ -91,7 +84,6 @@ const productos = [
     colores: ['Verde', 'Azul', 'Rosa'],
     descripcion: 'Un marco irregular para reflejar tu lado más colorido.',
     destacado: false,
-    nuevo: false,
   },
   {
     id: 'porta-lapices-happy',
@@ -102,7 +94,6 @@ const productos = [
     colores: ['Amarillo', 'Rojo', 'Azul'],
     descripcion: 'Un regalo pequeño y expresivo para escritorios con personalidad.',
     destacado: false,
-    nuevo: true,
   },
   {
     id: 'bandeja-zigzag',
@@ -113,7 +104,6 @@ const productos = [
     colores: ['Crema', 'Verde', 'Rojo'],
     descripcion: 'Una bandeja para ordenar, servir o simplemente decorar.',
     destacado: false,
-    nuevo: false,
   },
 ];
 
@@ -178,7 +168,6 @@ function renderProducts(selector, products, type) {
 }
 
 renderProducts('#featured-products-grid', productos.filter((product) => product.destacado), 'featured');
-renderProducts('#new-products-grid', productos.filter((product) => product.nuevo), 'new');
 renderProducts('#catalog-products-grid', productos, 'catalog');
 
 const catalogFilters = document.querySelector('.catalog-filters');
