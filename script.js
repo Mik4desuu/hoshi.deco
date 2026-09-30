@@ -6,139 +6,91 @@ const WHATSAPP_NUMBER = '59800000000';
 
 const productos = [
   {
-    id: 'florero-brick',
-    nombre: 'Florero Brick',
-    precio: 850,
-    categoria: 'Floreros',
-    imagen: 'assets/images/florero-brick.jpg',
-    colores: ['Rojo', 'Azul', 'Rosa'],
-    descripcion: 'Un florero con silueta de bloque para flores con actitud.',
-    destacado: true,
-  },
-  {
-    id: 'portarrollos-pop',
-    nombre: 'Portarrollos Pop',
-    precio: 990,
-    categoria: 'Baño',
-    imagen: 'assets/images/portarrollos-pop.jpg',
-    colores: ['Amarillo', 'Azul', 'Verde'],
-    descripcion: 'El detalle inesperado para hacer del baño un lugar más divertido.',
-    destacado: true,
-  },
-  {
-    id: 'tapa-luz-wave',
-    nombre: 'Tapa de luz Wave',
-    precio: 590,
+    id: 'cartucho-game-boy',
+    nombre: 'Cartucho Game Boy',
+    precio: '$850',
     categoria: 'Objetos',
-    imagen: 'assets/images/tapa-luz-wave.jpg',
-    colores: ['Crema', 'Rojo', 'Rosa'],
-    descripcion: 'Una ola de color para los rincones que suelen pasar desapercibidos.',
+    imagen: 'assets/images/cartucho game boy .jpg',
+    informacion: ['Disponible en distintos personajes.'],
+    destacado: true,
+  },
+  {
+    id: 'espejo-nube',
+    nombre: 'Espejo Nube',
+    precio: '$590',
+    categoria: 'Espejos',
+    imagen: 'assets/images/espejo nube.jpg',
+    informacion: ['20 cm de diámetro.'],
     destacado: true,
   },
   {
     id: 'espejo-paint',
     nombre: 'Espejo Paint',
-    precio: 2490,
+    precio: '$2.490',
     categoria: 'Espejos',
-    imagen: 'assets/images/espejo-paint.jpg',
-    colores: ['Azul', 'Verde', 'Amarillo'],
-    descripcion: 'Un espejo que también funciona como una pequeña pieza de arte.',
+    imagen: 'assets/images/espejo paint.jpg',
+    informacion: ['80 × 60 cm.'],
     destacado: true,
   },
   {
-    id: 'florero-twist',
-    nombre: 'Florero Twist',
-    precio: 1190,
+    id: 'florero-lego',
+    nombre: 'Florero Lego',
+    precio: '$750',
     categoria: 'Floreros',
-    imagen: 'assets/images/florero-twist.jpg',
-    colores: ['Rosa', 'Crema', 'Verde'],
-    descripcion: 'Curvas, color y un lugar perfecto para tus flores favoritas.',
-    destacado: false,
+    imagen: 'assets/images/florero lego.jpg',
+    informacion: ['16 × 6,5 cm.', 'Colores personalizados.'],
+    destacado: true,
   },
   {
-    id: 'jabonera-bubble',
-    nombre: 'Jabonera Bubble',
-    precio: 690,
-    categoria: 'Baño',
-    imagen: 'assets/images/jabonera-bubble.jpg',
-    colores: ['Azul', 'Rosa', 'Amarillo'],
-    descripcion: 'Una jabonera con burbujas para darle onda a la rutina.',
-    destacado: false,
-  },
-  {
-    id: 'portavelas-disco',
-    nombre: 'Portavelas Disco',
-    precio: 780,
-    categoria: 'Objetos',
-    imagen: 'assets/images/portavelas-disco.jpg',
-    colores: ['Rojo', 'Amarillo', 'Crema'],
-    descripcion: 'Para encender una luz suave, colorida y muy Hoshi.',
-    destacado: false,
-  },
-  {
-    id: 'espejo-splash',
-    nombre: 'Espejo Splash',
-    precio: 2790,
-    categoria: 'Espejos',
-    imagen: 'assets/images/espejo-splash.jpg',
-    colores: ['Verde', 'Azul', 'Rosa'],
-    descripcion: 'Un marco irregular para reflejar tu lado más colorido.',
-    destacado: false,
-  },
-  {
-    id: 'porta-lapices-happy',
-    nombre: 'Portalápices Happy',
-    precio: 640,
+    id: 'portafoto-mitsy',
+    nombre: 'Portafoto Mitsy',
+    precio: '$65 c/u',
     categoria: 'Regalos',
-    imagen: 'assets/images/porta-lapices-happy.jpg',
-    colores: ['Amarillo', 'Rojo', 'Azul'],
-    descripcion: 'Un regalo pequeño y expresivo para escritorios con personalidad.',
+    imagen: 'assets/images/portafoto misty.jpg',
+    informacion: ['3 por $150.'],
     destacado: false,
   },
   {
-    id: 'bandeja-zigzag',
-    nombre: 'Bandeja Zigzag',
-    precio: 1350,
-    categoria: 'Objetos',
-    imagen: 'assets/images/bandeja-zigzag.jpg',
-    colores: ['Crema', 'Verde', 'Rojo'],
-    descripcion: 'Una bandeja para ordenar, servir o simplemente decorar.',
+    id: 'portarrollos',
+    nombre: 'Portarrollos',
+    precio: '$450',
+    categoria: 'Baño',
+    imagen: 'assets/images/portarrollo .jpg',
+    informacion: [],
     destacado: false,
   },
 ];
 
 const featuredVariants = {
-  'florero-brick': 'brick',
-  'portarrollos-pop': 'pop',
-  'tapa-luz-wave': 'wave',
-  'espejo-paint': 'paint',
+  'cartucho-game-boy': 'brick',
+  'espejo-nube': 'pop',
+  'espejo-paint': 'wave',
+  'florero-lego': 'paint',
 };
 
-const formatPrice = (price) => `$${price.toLocaleString('es-UY')} UYU`;
+const formatPrice = (price) => price;
 const whatsappLink = (productName) => {
   const message = `Hola! Quería consultar por ${productName} ✨`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 
 function productMarkup(product, type = 'catalog') {
-  const colors = product.colores.join(', ');
   const variant = featuredVariants[product.id] || 'brick';
   const extraClass = type === 'featured' ? ` product-card--${variant}` : '';
-  const description = type === 'catalog' ? `<p class="product-card__description">${product.descripcion}</p>` : '';
+  const information = product.informacion.length
+    ? `<p class="product-card__description">${product.informacion.join('<br>')}</p>`
+    : '';
 
   return `
     <article class="product-card${extraClass}" data-product-id="${product.id}">
       <div class="product-card__image" data-image-path="${product.imagen}">
-        <span class="product-card__image-label">Foto ${product.nombre}</span>
         <img class="product-card__photo" src="${product.imagen}" alt="${product.nombre}" />
         <span class="product-card__shape" aria-hidden="true"></span>
       </div>
       <div class="product-card__info">
-        <p class="product-card__category">${product.categoria}</p>
         <h3>${product.nombre}</h3>
         <p class="product-card__price">${formatPrice(product.precio)}</p>
-        <p class="product-card__colors"><strong>Colores:</strong> ${colors}</p>
-        ${description}
+        ${information}
         <div class="product-card__actions">
           <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
           <a
