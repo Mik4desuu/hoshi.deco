@@ -1,8 +1,22 @@
 const menuToggle = document.querySelector('.menu-toggle');
 const mainNavigation = document.querySelector('.main-nav');
 const menuToggleLabel = menuToggle?.querySelector('.sr-only');
+const scrollStar = document.querySelector('.scroll-star');
+const selectionToggle = document.querySelector('.selection-toggle');
+const selectionCount = document.querySelector('.selection-toggle__count');
+const selectionPanel = document.querySelector('.selection-panel');
+const selectionBackdrop = document.querySelector('.selection-backdrop');
+const selectionClose = document.querySelector('.selection-panel__close');
+const selectionItems = document.querySelector('.selection-items');
+const selectionEmpty = document.querySelector('.selection-panel__empty');
+const selectionSummary = document.querySelector('.selection-panel__summary');
+const selectionSubtotal = document.querySelector('.selection-subtotal');
+const selectionTotal = document.querySelector('.selection-total');
+const selectionWhatsApp = document.querySelector('.selection-whatsapp');
+const selectionToast = document.querySelector('.selection-toast');
 // Reemplazá este valor por el número real de Hoshi.deco, incluyendo el código de país y sin + ni espacios.
 const WHATSAPP_NUMBER = '59800000000';
+const SELECTION_STORAGE_KEY = 'hoshi-selection';
 
 const productos = [
   {
@@ -69,10 +83,162 @@ const featuredVariants = {
 };
 
 const formatPrice = (price) => price;
-const whatsappLink = (productName) => {
-  const message = `Hola! Quería consultar por ${productName} ✨`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-};
+const priceValue = (price) => Number(price.replace(/[^\d]/g, ''));
+const formatTotal = (total) => `$${total.toLocaleString('es-UY')}`;
+
+function loadSelection() {
+  try {
+    const storedSelection = JSON.parse(window.localStorage.getItem(SELECTION_STORAGE_KEY) || '[]');
+
+    if (!Array.isArray(storedSelection)) {
+      return [];
+    }
+
+    return storedSelection.filter((item) => (
+      productos.some((product) => product.id === item.id)
+      && Number.isInteger(item.quantity)
+      && item.quantity > 0
+    ));
+  } catch {
+    return [];
+  }
+}
+
+let selection = loadSelection();
+let selectionToastTimeout;
+let isSelectionOpen = false;
+
+function saveSelection() {
+  try {
+    window.localStorage.setItem(SELECTION_STORAGE_KEY, JSON.stringify(selection));
+  } catch {
+    // La selección sigue funcionando durante esta visita si localStorage no está disponible.
+  }
+}
+
+function selectionTotalValue() {
+  return selection.reduce((total, item) => {
+    const product = productos.find(({ id }) => id === item.id);
+    return product ? total + priceValue(product.precio) * item.quantity : total;
+  }, 0);
+}
+
+function hasVariantToCoordinate(product) {
+  return product.informacion.some((info) => /distintos personajes|colores personalizados/i.test(info));
+}
+
+function renderSelection() {
+  const itemCount = selection.reduce((total, item) => total + item.quantity, 0);
+  const total = selectionTotalValue();
+
+  if (selectionCount) {
+    selectionCount.textContent = itemCount;
+  }
+
+  if (selectionToggle) {
+    selectionToggle.setAttribute('aria-label', `Abrir selección: ${itemCount} ${itemCount === 1 ? 'cosa' : 'cosas'}`);
+  }
+
+  if (!selectionItems || !selectionEmpty || !selectionSummary || !selectionSubtotal || !selectionTotal) {
+    return;
+  }
+
+  selectionItems.innerHTML = selection.map((item) => {
+    const product = productos.find(({ id }) => id === item.id);
+
+    if (!product) {
+      return '';
+    }
+
+    return `
+      <li class="selection-item">
+        <img src="${product.imagen}" alt="" />
+        <div class="selection-item__details">
+          <h3>${product.nombre}</h3>
+          <p>${product.precio}</p>
+          <div class="selection-item__controls" aria-label="Cantidad de ${product.nombre}">
+            <button type="button" data-selection-action="decrease" data-product-id="${product.id}" aria-label="Quitar una unidad de ${product.nombre}">−</button>
+            <span>${item.quantity}</span>
+            <button type="button" data-selection-action="increase" data-product-id="${product.id}" aria-label="Agregar una unidad de ${product.nombre}">+</button>
+          </div>
+        </div>
+        <button class="selection-item__remove" type="button" data-selection-action="remove" data-product-id="${product.id}">Eliminar</button>
+      </li>
+    `;
+  }).join('');
+
+  const isEmpty = selection.length === 0;
+  selectionEmpty.hidden = !isEmpty;
+  selectionItems.hidden = isEmpty;
+  selectionSummary.hidden = isEmpty;
+  selectionSubtotal.textContent = formatTotal(total);
+  selectionTotal.textContent = formatTotal(total);
+}
+
+function updateSelection(productId, amount) {
+  const item = selection.find(({ id }) => id === productId);
+
+  if (item) {
+    item.quantity += amount;
+  } else if (amount > 0) {
+    selection.push({ id: productId, quantity: amount });
+  }
+
+  selection = selection.filter(({ quantity }) => quantity > 0);
+  saveSelection();
+  renderSelection();
+}
+
+function showSelectionToast() {
+  if (!selectionToast) {
+    return;
+  }
+
+  window.clearTimeout(selectionToastTimeout);
+  selectionToast.hidden = false;
+
+  selectionToastTimeout = window.setTimeout(() => {
+    selectionToast.hidden = true;
+  }, 1800);
+}
+
+function renderSelectionVisibility() {
+  if (selectionPanel) {
+    selectionPanel.hidden = !isSelectionOpen;
+  }
+
+  if (selectionBackdrop) {
+    selectionBackdrop.hidden = !isSelectionOpen;
+  }
+
+  selectionToggle?.setAttribute('aria-expanded', String(isSelectionOpen));
+  document.body.classList.toggle('is-selection-open', isSelectionOpen);
+}
+
+function openSelection(trigger) {
+  if (trigger !== selectionToggle) {
+    return;
+  }
+
+  isSelectionOpen = true;
+  renderSelectionVisibility();
+}
+
+function closeSelection() {
+  isSelectionOpen = false;
+  renderSelectionVisibility();
+}
+
+function sendSelectionToWhatsApp() {
+  const orderLines = selection.map((item) => {
+    const product = productos.find(({ id }) => id === item.id);
+    const variantNote = hasVariantToCoordinate(product) ? '\n  Variante/color: a coordinar' : '';
+    return `• ${item.quantity} × ${product.nombre} — ${product.precio}${variantNote}`;
+  });
+  const message = `Hola! 💌 Quiero hacer este pedido en Hoshi:\n\n${orderLines.join('\n')}\n\nTotal: ${formatTotal(selectionTotalValue())}\n\n¿Coordinamos? ✨`;
+
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+}
 
 function productMarkup(product, type = 'catalog') {
   const variant = featuredVariants[product.id] || 'brick';
@@ -93,14 +259,7 @@ function productMarkup(product, type = 'catalog') {
         ${information}
         <div class="product-card__actions">
           <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
-          <a
-            class="product-card__button product-card__button--want"
-            href="${whatsappLink(product.nombre)}"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Lo quiero <span aria-hidden="true">↗</span>
-          </a>
+          <button class="product-card__button product-card__button--want" type="button" data-add-product="${product.id}">Lo quiero +</button>
         </div>
       </div>
     </article>
@@ -121,6 +280,59 @@ function renderProducts(selector, products, type) {
 
 renderProducts('#featured-products-grid', productos.filter((product) => product.destacado), 'featured');
 renderProducts('#catalog-products-grid', productos, 'catalog');
+renderSelection();
+renderSelectionVisibility();
+
+document.addEventListener('click', (event) => {
+  const addButton = event.target.closest('[data-add-product]');
+  const selectionAction = event.target.closest('[data-selection-action]');
+
+  if (addButton) {
+    event.preventDefault();
+    updateSelection(addButton.dataset.addProduct, 1);
+    showSelectionToast();
+    return;
+  }
+
+  if (!selectionAction) {
+    return;
+  }
+
+  const productId = selectionAction.dataset.productId;
+
+  if (selectionAction.dataset.selectionAction === 'increase') {
+    updateSelection(productId, 1);
+  } else if (selectionAction.dataset.selectionAction === 'decrease') {
+    updateSelection(productId, -1);
+  } else if (selectionAction.dataset.selectionAction === 'remove') {
+    selection = selection.filter(({ id }) => id !== productId);
+    saveSelection();
+    renderSelection();
+  }
+});
+
+selectionToggle?.addEventListener('click', (event) => {
+  event.preventDefault();
+  openSelection(event.currentTarget);
+});
+selectionClose?.addEventListener('click', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  closeSelection();
+});
+
+selectionBackdrop?.addEventListener('click', (event) => {
+  if (event.target === selectionBackdrop) {
+    closeSelection();
+  }
+});
+selectionWhatsApp?.addEventListener('click', sendSelectionToWhatsApp);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && isSelectionOpen) {
+    closeSelection();
+  }
+});
 
 const catalogFilters = document.querySelector('.catalog-filters');
 
@@ -165,4 +377,72 @@ if (menuToggle && mainNavigation && menuToggleLabel) {
       mainNavigation.classList.remove('is-open');
     }
   });
+}
+
+if (scrollStar) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let animationFrame;
+  let currentPosition = 0;
+  let targetPosition = 0;
+  let currentRotation = 0;
+  let targetRotation = 0;
+
+  const setStarPosition = () => {
+    scrollStar.style.setProperty('--scroll-star-y', `${currentPosition}px`);
+    scrollStar.style.setProperty('--scroll-star-rotation', `${currentRotation}deg`);
+  };
+
+  const updateTargetPosition = (isInitialPosition = false) => {
+    const maximumScroll = Math.max(
+      document.documentElement.scrollHeight - window.innerHeight,
+      1,
+    );
+    const scrollProgress = Math.min(Math.max(window.scrollY / maximumScroll, 0), 1);
+
+    targetPosition = window.innerHeight * (0.13 + scrollProgress * 0.63);
+    targetRotation = -5 + scrollProgress * 10;
+
+    if (isInitialPosition) {
+      currentPosition = targetPosition;
+      currentRotation = targetRotation;
+      setStarPosition();
+      return;
+    }
+
+    if (!animationFrame) {
+      animationFrame = window.requestAnimationFrame(animateStar);
+    }
+  };
+
+  const animateStar = () => {
+    currentPosition += (targetPosition - currentPosition) * 0.1;
+    currentRotation += (targetRotation - currentRotation) * 0.1;
+    setStarPosition();
+
+    if (
+      Math.abs(targetPosition - currentPosition) > 0.2
+      || Math.abs(targetRotation - currentRotation) > 0.05
+    ) {
+      animationFrame = window.requestAnimationFrame(animateStar);
+    } else {
+      currentPosition = targetPosition;
+      currentRotation = targetRotation;
+      setStarPosition();
+      animationFrame = undefined;
+    }
+  };
+
+  const enableStarMotion = () => {
+    updateTargetPosition(true);
+    window.addEventListener('scroll', updateTargetPosition, { passive: true });
+    window.addEventListener('resize', updateTargetPosition);
+
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => updateTargetPosition()).observe(document.body);
+    }
+  };
+
+  if (!reducedMotion.matches) {
+    enableStarMotion();
+  }
 }

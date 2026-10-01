@@ -38,6 +38,21 @@
           </ul>
         </nav>
 
+        <button
+          class="selection-toggle"
+          type="button"
+          data-selection-open
+          aria-expanded="false"
+          aria-controls="selection-panel"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M5 8.5H19L18.2 20H5.8L5 8.5Z" />
+            <path d="M8.5 9V6.5A3.5 3.5 0 0 1 15.5 6.5V9" />
+          </svg>
+          <span class="selection-toggle__count" aria-hidden="true">0</span>
+          <span class="sr-only">Abrir selección</span>
+        </button>
+
         <div class="header-socials">
           <a
             class="social-link social-link--instagram"
@@ -59,6 +74,30 @@
         </div>
       </div>
     </header>
+
+    <div class="selection-backdrop" hidden></div>
+    <p class="selection-toast" role="status" aria-live="polite" hidden>✓ Agregado a tu selección</p>
+    <aside class="selection-panel" id="selection-panel" aria-label="Tu selección" hidden>
+      <div class="selection-panel__header">
+        <p>Tu selección</p>
+        <button class="selection-panel__close" type="button" data-selection-close aria-label="Cerrar selección">×</button>
+      </div>
+      <div class="selection-panel__content">
+        <p class="selection-panel__empty">Todavía no elegiste ninguna cosa.</p>
+        <ul class="selection-items"></ul>
+      </div>
+      <div class="selection-panel__summary" hidden>
+        <p><span>Subtotal</span><strong class="selection-subtotal">$0</strong></p>
+        <p class="selection-panel__total"><span>Total del pedido</span><strong class="selection-total">$0</strong></p>
+        <button class="selection-whatsapp" type="button">Pedir por WhatsApp <span aria-hidden="true">↗</span></button>
+      </div>
+    </aside>
+
+    <div class="scroll-star" aria-hidden="true">
+      <svg viewBox="0 0 100 100" focusable="false">
+        <path d="M50 4C54 32 68 46 96 50C68 54 54 68 50 96C46 68 32 54 4 50C32 46 46 32 50 4Z" />
+      </svg>
+    </div>
 
     <main>
       <section class="hero" id="inicio" aria-labelledby="hero-title">
