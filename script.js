@@ -258,7 +258,6 @@ function productMarkup(product, type = 'catalog') {
         <p class="product-card__price">${formatPrice(product.precio)}</p>
         ${information}
         <div class="product-card__actions">
-          <a class="product-card__button" href="#catalogo">Ver producto <span aria-hidden="true">→</span></a>
           <button class="product-card__button product-card__button--want" type="button" data-add-product="${product.id}">Lo quiero +</button>
         </div>
       </div>
