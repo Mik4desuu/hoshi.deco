@@ -17,6 +17,13 @@ const selectionToast = document.querySelector('.selection-toast');
 // Reemplazá este valor por el número real de Hoshi.deco, incluyendo el código de país y sin + ni espacios.
 const WHATSAPP_NUMBER = '59800000000';
 const SELECTION_STORAGE_KEY = 'hoshi-selection';
+const MASCOT_DISABLED_STORAGE_KEY = 'hoshi-mascot-disabled';
+const MASCOT_GREETING_SESSION_KEY = 'hoshi-mascot-greeting-seen';
+const mascotElement = document.querySelector('.hoshi-mascot');
+const mascotImage = document.querySelector('.hoshi-mascot__image');
+const mascotButton = document.querySelector('.hoshi-mascot__button');
+const mascotMessage = document.querySelector('.hoshi-mascot__message');
+const mascotToggle = document.querySelector('.hoshi-mascot-toggle');
 
 const productos = [
   {
@@ -149,6 +156,235 @@ let selection = loadSelection();
 let selectionToastTimeout;
 let isSelectionOpen = false;
 
+function createMascot() {
+  if (!mascotElement || !mascotImage || !mascotButton || !mascotToggle) {
+    return {
+      init() {}, hide() {}, onCategory() {}, celebrate() {}, react() {},
+    };
+  }
+
+  const poses = {
+    peeking: 'assets/hoshi_estrella/01_se_asoma.png',
+    greeting: 'assets/hoshi_estrella/02_saluda.png',
+    curious: 'assets/hoshi_estrella/03_curiosa_deco.png',
+    reading: 'assets/hoshi_estrella/04_lectores.png',
+    reacting: 'assets/hoshi_estrella/05_reacciona_toque.png',
+    celebrating: 'assets/hoshi_estrella/06_celebra_carrito.png',
+    hiding: 'assets/hoshi_estrella/07_se_esconde.png',
+    excited: 'assets/hoshi_estrella/09_emocionada.png',
+    jumping: 'assets/hoshi_estrella/13_salta_feliz.png',
+    surprised: 'assets/hoshi_estrella/14_sorprendida.png',
+    approving: 'assets/hoshi_estrella/15_aprueba.png',
+  };
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const played = { deco: false, readers: false };
+  let disabled = false;
+  let timers = [];
+  let activeState = 'hidden';
+  let hostCard;
+
+  try {
+    disabled = window.localStorage.getItem(MASCOT_DISABLED_STORAGE_KEY) === 'true';
+  } catch {
+    disabled = false;
+  }
+
+  const schedule = (callback, delay) => {
+    const timer = window.setTimeout(callback, delay);
+    timers.push(timer);
+    return timer;
+  };
+
+  const clearTimers = () => {
+    timers.forEach((timer) => window.clearTimeout(timer));
+    timers = [];
+  };
+
+  const updateToggle = () => {
+    mascotToggle.setAttribute('aria-pressed', String(disabled));
+    mascotToggle.setAttribute('aria-label', disabled ? 'Activar animaciones de la estrella' : 'Desactivar animaciones de la estrella');
+    mascotToggle.innerHTML = `<span aria-hidden="true">✦</span> ${disabled ? 'Mascota off' : 'Mascota'}`;
+  };
+
+  const canAppear = () => !disabled && !reducedMotion.matches && !isSelectionOpen;
+
+  const setPose = (pose) => {
+    mascotImage.src = poses[pose];
+  };
+
+  const resetLocation = () => {
+    hostCard?.classList.remove('has-hoshi-mascot');
+    hostCard = undefined;
+    document.body.append(mascotElement);
+  };
+
+  const hide = (immediate = false) => {
+    clearTimers();
+    activeState = 'hidden';
+    mascotElement.dataset.mascotState = 'hidden';
+    mascotElement.classList.remove('is-visible', 'hoshi-mascot--greeting', 'hoshi-mascot--cart', 'hoshi-mascot--reading', 'hoshi-mascot--deco', 'is-reacting');
+    if (mascotMessage) {
+      mascotMessage.hidden = true;
+    }
+
+    const finish = () => {
+      mascotElement.hidden = true;
+      mascotElement.setAttribute('aria-hidden', 'true');
+      resetLocation();
+    };
+
+    if (immediate) {
+      finish();
+    } else {
+      schedule(finish, 430);
+    }
+  };
+
+  const place = (position, card) => {
+    resetLocation();
+    mascotElement.classList.remove('hoshi-mascot--greeting', 'hoshi-mascot--cart', 'hoshi-mascot--reading', 'hoshi-mascot--deco');
+
+    if (position === 'deco' && card) {
+      hostCard = card;
+      hostCard.classList.add('has-hoshi-mascot');
+      hostCard.append(mascotElement);
+      mascotElement.classList.add('hoshi-mascot--deco');
+    } else if (position === 'greeting') {
+      mascotElement.classList.add('hoshi-mascot--greeting');
+    } else if (position === 'cart') {
+      mascotElement.classList.add('hoshi-mascot--cart');
+    } else if (position === 'reading') {
+      mascotElement.classList.add('hoshi-mascot--reading');
+    }
+  };
+
+  const show = (state, options = {}) => {
+    if (!canAppear()) {
+      return false;
+    }
+
+    clearTimers();
+    place(options.position, options.card);
+    activeState = state;
+    mascotElement.dataset.mascotState = state;
+    setPose(options.pose || state);
+    mascotElement.hidden = false;
+    mascotElement.setAttribute('aria-hidden', 'false');
+    mascotElement.classList.remove('is-reacting');
+    mascotMessage.hidden = !options.message;
+    if (options.message) {
+      mascotMessage.textContent = options.message;
+    }
+
+    window.requestAnimationFrame(() => mascotElement.classList.add('is-visible'));
+    schedule(() => hide(), options.duration || 2000);
+    return true;
+  };
+
+  const greet = () => {
+    if (!show('peeking', { pose: 'peeking', position: 'greeting', duration: 3400 })) {
+      return;
+    }
+    schedule(() => {
+      activeState = 'greeting';
+      mascotElement.dataset.mascotState = 'greeting';
+      setPose('greeting');
+    }, 700);
+    schedule(() => setPose('hiding'), 2470);
+  };
+
+  const showDeco = () => {
+    if (played.deco || !canAppear()) {
+      return;
+    }
+    const card = document.querySelector('#catalog-products-grid .product-card');
+    if (show('curious', { pose: 'curious', position: 'deco', card, duration: 2300 })) {
+      played.deco = true;
+      schedule(() => setPose('hiding'), 1760);
+    }
+  };
+
+  const showReaders = () => {
+    if (played.readers || !canAppear()) {
+      return;
+    }
+    if (show('reading', { pose: 'reading', position: 'reading', duration: 2300 })) {
+      played.readers = true;
+      schedule(() => setPose('hiding'), 1760);
+    }
+  };
+
+  const react = () => {
+    if (activeState === 'hidden' || disabled || reducedMotion.matches || isSelectionOpen) {
+      return;
+    }
+    clearTimers();
+    const reactions = ['reacting', 'jumping', 'surprised', 'approving', 'excited'];
+    setPose(reactions[Math.floor(Math.random() * reactions.length)]);
+    activeState = 'reacting';
+    mascotElement.dataset.mascotState = 'reacting';
+    mascotElement.classList.add('is-reacting');
+    schedule(() => hide(), 1500);
+  };
+
+  const celebrate = () => {
+    show('celebrating', {
+      pose: 'celebrating',
+      position: 'cart',
+      message: '¡Qué buena elección!',
+      duration: 2050,
+    });
+  };
+
+  mascotButton.addEventListener('click', react);
+  mascotToggle.addEventListener('click', () => {
+    disabled = !disabled;
+    try {
+      window.localStorage.setItem(MASCOT_DISABLED_STORAGE_KEY, String(disabled));
+    } catch {
+      // Si no hay almacenamiento disponible, se conserva la preferencia durante esta visita.
+    }
+    updateToggle();
+    if (disabled) {
+      hide(true);
+    }
+  });
+  reducedMotion.addEventListener?.('change', () => {
+    if (reducedMotion.matches) {
+      hide(true);
+    }
+  });
+
+  return {
+    init() {
+      updateToggle();
+      if (disabled || reducedMotion.matches) {
+        return;
+      }
+      try {
+        if (window.sessionStorage.getItem(MASCOT_GREETING_SESSION_KEY)) {
+          return;
+        }
+        window.sessionStorage.setItem(MASCOT_GREETING_SESSION_KEY, 'true');
+      } catch {
+        // La sesión actual mantiene la protección de ejecuciones repetidas si storage no está disponible.
+      }
+      schedule(greet, 650);
+    },
+    hide,
+    onCategory(category) {
+      if (category === 'deco') {
+        schedule(showDeco, 220);
+      } else if (category === 'lectores') {
+        schedule(showReaders, 220);
+      }
+    },
+    celebrate,
+  };
+}
+
+const mascot = createMascot();
+
 function saveSelection() {
   try {
     window.localStorage.setItem(SELECTION_STORAGE_KEY, JSON.stringify(selection));
@@ -262,6 +498,10 @@ function renderSelectionVisibility() {
 
   selectionToggle?.setAttribute('aria-expanded', String(isSelectionOpen));
   document.body.classList.toggle('is-selection-open', isSelectionOpen);
+
+  if (isSelectionOpen) {
+    mascot.hide(true);
+  }
 }
 
 function openSelection(trigger) {
@@ -416,6 +656,7 @@ document.addEventListener('click', (event) => {
     event.preventDefault();
     updateSelection(addButton.dataset.addProduct, addButton.dataset.variantId || null, 1);
     showSelectionToast();
+    mascot.celebrate();
     return;
   }
 
@@ -464,6 +705,7 @@ const catalogFilters = document.querySelector('.catalog-filters');
 const catalogEmpty = document.querySelector('#catalog-empty');
 
 function setCatalogCategory(category) {
+  mascot.hide(true);
   const filteredProducts = category === 'todos'
     ? productos
     : productos.filter((product) => product.categoria === category);
@@ -479,6 +721,8 @@ function setCatalogCategory(category) {
   if (catalogEmpty) {
     catalogEmpty.hidden = filteredProducts.length > 0;
   }
+
+  mascot.onCategory(category);
 }
 
 if (catalogFilters) {
@@ -503,6 +747,8 @@ document.querySelector('[data-catalog-reset]')?.addEventListener('click', () => 
   setCatalogCategory('todos');
   document.querySelector('#catalogo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
+
+mascot.init();
 
 if (menuToggle && mainNavigation && menuToggleLabel) {
   menuToggle.addEventListener('click', () => {
