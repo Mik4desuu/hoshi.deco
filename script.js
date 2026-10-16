@@ -23,7 +23,8 @@ const productos = [
     id: 'cartucho-game-boy',
     nombre: 'Cartucho Game Boy',
     precio: '$850',
-    categoria: 'Objetos',
+    categoria: 'deco',
+    subcategoria: 'Objetos',
     imagen: 'assets/images/cartucho game boy .jpg',
     informacion: ['Disponible en distintos personajes.'],
     destacado: true,
@@ -32,7 +33,8 @@ const productos = [
     id: 'espejo-nube',
     nombre: 'Espejo Nube',
     precio: '$590',
-    categoria: 'Espejos',
+    categoria: 'deco',
+    subcategoria: 'Espejos',
     imagen: 'assets/images/espejo nube.jpg',
     informacion: ['20 cm de diámetro.'],
     destacado: true,
@@ -41,7 +43,8 @@ const productos = [
     id: 'espejo-paint',
     nombre: 'Espejo Paint',
     precio: '$2.490',
-    categoria: 'Espejos',
+    categoria: 'deco',
+    subcategoria: 'Espejos',
     imagen: 'assets/images/espejo paint.jpg',
     informacion: ['80 × 60 cm.'],
     destacado: true,
@@ -50,7 +53,8 @@ const productos = [
     id: 'florero-lego',
     nombre: 'Florero Lego',
     precio: '$750',
-    categoria: 'Floreros',
+    categoria: 'deco',
+    subcategoria: 'Floreros',
     imagen: 'assets/images/florero lego.jpg',
     informacion: ['16 × 6,5 cm.', 'Colores personalizados.'],
     destacado: true,
@@ -59,7 +63,8 @@ const productos = [
     id: 'portafoto-mitsy',
     nombre: 'Portafoto Mitsy',
     precio: '$65 c/u',
-    categoria: 'Regalos',
+    categoria: 'deco',
+    subcategoria: 'Regalos',
     imagen: 'assets/images/portafoto misty.jpg',
     informacion: ['3 por $150.'],
     destacado: false,
@@ -68,7 +73,8 @@ const productos = [
     id: 'portarrollos',
     nombre: 'Portarrollos',
     precio: '$450',
-    categoria: 'Baño',
+    categoria: 'deco',
+    subcategoria: 'Baño',
     imagen: 'assets/images/portarrollo .jpg',
     informacion: [],
     destacado: false,
@@ -334,6 +340,25 @@ document.addEventListener('keydown', (event) => {
 });
 
 const catalogFilters = document.querySelector('.catalog-filters');
+const catalogEmpty = document.querySelector('#catalog-empty');
+
+function setCatalogCategory(category) {
+  const filteredProducts = category === 'todos'
+    ? productos
+    : productos.filter((product) => product.categoria === category);
+
+  catalogFilters?.querySelectorAll('.catalog-filter').forEach((button) => {
+    const isActive = button.dataset.category === category;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+
+  renderProducts('#catalog-products-grid', filteredProducts, 'catalog');
+
+  if (catalogEmpty) {
+    catalogEmpty.hidden = filteredProducts.length > 0;
+  }
+}
 
 if (catalogFilters) {
   catalogFilters.addEventListener('click', (event) => {
@@ -343,22 +368,20 @@ if (catalogFilters) {
       return;
     }
 
-    const selectedCategory = filterButton.dataset.category;
-    const filteredProducts = selectedCategory === 'todos'
-      ? productos
-      : productos.filter(
-        (product) => product.categoria.toLocaleLowerCase('es-UY') === selectedCategory,
-      );
-
-    catalogFilters.querySelectorAll('.catalog-filter').forEach((button) => {
-      const isActive = button === filterButton;
-      button.classList.toggle('is-active', isActive);
-      button.setAttribute('aria-pressed', String(isActive));
-    });
-
-    renderProducts('#catalog-products-grid', filteredProducts, 'catalog');
+    setCatalogCategory(filterButton.dataset.category);
   });
 }
+
+document.querySelectorAll('[data-catalog-category]').forEach((categoryLink) => {
+  categoryLink.addEventListener('click', () => {
+    setCatalogCategory(categoryLink.dataset.catalogCategory);
+  });
+});
+
+document.querySelector('[data-catalog-reset]')?.addEventListener('click', () => {
+  setCatalogCategory('todos');
+  document.querySelector('#catalogo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 
 if (menuToggle && mainNavigation && menuToggleLabel) {
   menuToggle.addEventListener('click', () => {

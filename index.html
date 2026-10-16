@@ -32,6 +32,8 @@
 
         <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
           <ul>
+            <li><a href="#catalogo" data-catalog-category="deco">Deco</a></li>
+            <li><a href="#catalogo" data-catalog-category="lectores">Lectores</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
             <li><a href="#sobre-hoshi">Sobre Hoshi</a></li>
             <li><a href="#contacto">Contacto</a></li>
@@ -113,25 +115,45 @@
               <a class="hero__button hero__button--primary" href="#catalogo">
                 Ver catálogo
               </a>
-              <a
-                class="hero__button hero__button--secondary"
-                href="https://wa.me/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Hablar por WhatsApp
-              </a>
             </div>
           </div>
 
-          <div class="hero__visual" aria-label="Espacio para fotografía lifestyle de Hoshi.deco">
-            <div class="hero__photo-placeholder">
-              <span>Foto lifestyle<br />de producto</span>
-            </div>
+          <div class="hero__visual">
+            <img class="hero__photo" src="assets/images/florero lego.jpg" alt="Florero Lego de Hoshi.deco" />
             <span class="hero__sticker hero__sticker--star" aria-hidden="true">✦</span>
-            <span class="hero__sticker hero__sticker--smile" aria-hidden="true">☺</span>
+            <span class="hero__sticker hero__sticker--smile" aria-hidden="true">✿</span>
             <span class="hero__scribble" aria-hidden="true"></span>
-            <p class="hero__visual-note">Tu casa, tus reglas.</p>
+            <p class="hero__visual-note">Color para<br />vivir lindo</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-worlds" aria-labelledby="product-worlds-title">
+        <div class="container">
+          <div class="product-worlds__heading">
+            <p class="product-worlds__eyebrow">Dos mundos, una misma casa</p>
+            <h2 id="product-worlds-title">¿Qué rincón vamos a alegrar hoy?</h2>
+          </div>
+
+          <div class="product-worlds__grid">
+            <a class="product-world product-world--deco" href="#catalogo" data-catalog-category="deco">
+              <span class="product-world__image" aria-hidden="true">
+                <img src="assets/images/florero lego.jpg" alt="" />
+              </span>
+              <span class="product-world__copy">
+                <strong>DECO</strong>
+                <span>Para tu casa</span>
+              </span>
+            </a>
+            <a class="product-world product-world--readers" href="#catalogo" data-catalog-category="lectores">
+              <span class="product-world__image" aria-hidden="true">
+                <img src="assets/images/cartucho game boy .jpg" alt="" />
+              </span>
+              <span class="product-world__copy">
+                <strong>LECTORES</strong>
+                <span>Para tu biblioteca</span>
+              </span>
+            </a>
           </div>
         </div>
       </section>
@@ -139,8 +161,8 @@
       <section class="featured-products" aria-labelledby="featured-products-title">
         <div class="container">
           <div class="favorites__heading">
-            <p class="favorites__eyebrow">Elegidos para vos</p>
-            <h2 id="featured-products-title">Favoritos de Hoshi</h2>
+            <p class="favorites__eyebrow">Una dosis de color</p>
+            <h2 id="featured-products-title">Productos destacados <span aria-hidden="true">✦</span></h2>
           <a class="favorites__all-link" href="#catalogo">Ver todo</a>
           </div>
 
@@ -164,14 +186,17 @@
             <h2 id="catalog-title">Catálogo</h2>
           </div>
           <div class="catalog-filters" aria-label="Filtrar productos por categoría">
-            <button class="catalog-filter is-active" type="button" data-category="todos" aria-pressed="true">Todos</button>
-            <button class="catalog-filter" type="button" data-category="floreros" aria-pressed="false">Floreros</button>
-            <button class="catalog-filter" type="button" data-category="baño" aria-pressed="false">Baño</button>
-            <button class="catalog-filter" type="button" data-category="espejos" aria-pressed="false">Espejos</button>
-            <button class="catalog-filter" type="button" data-category="objetos" aria-pressed="false">Objetos</button>
-            <button class="catalog-filter" type="button" data-category="regalos" aria-pressed="false">Regalos</button>
+            <button class="catalog-filter is-active" type="button" data-category="todos" aria-pressed="true">Todo</button>
+            <button class="catalog-filter" type="button" data-category="deco" aria-pressed="false">Deco</button>
+            <button class="catalog-filter" type="button" data-category="lectores" aria-pressed="false">Lectores</button>
           </div>
           <div class="product-list product-list--catalog" id="catalog-products-grid"></div>
+          <div class="catalog-empty" id="catalog-empty" hidden>
+            <span aria-hidden="true">✦</span>
+            <h3>Este rincón se está preparando</h3>
+            <p>Muy pronto vas a encontrar objetos para hacer de tu biblioteca un lugar todavía más vos.</p>
+            <button class="catalog-empty__reset" type="button" data-catalog-reset>Ver todo el catálogo</button>
+          </div>
         </div>
       </section>
 
