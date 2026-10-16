@@ -57,6 +57,8 @@ const productos = [
     subcategoria: 'Floreros',
     imagen: 'assets/images/florero lego.jpg',
     informacion: ['16 × 6,5 cm.', 'Colores personalizados.'],
+    // Agregá variantes solo cuando exista una foto real para cada color.
+    variantes: [],
     destacado: true,
   },
   {
@@ -92,6 +94,38 @@ const formatPrice = (price) => price;
 const priceValue = (price) => Number(price.replace(/[^\d]/g, ''));
 const formatTotal = (total) => `$${total.toLocaleString('es-UY')}`;
 
+function getProduct(productId) {
+  return productos.find(({ id }) => id === productId);
+}
+
+function getAvailableVariants(product) {
+  if (!Array.isArray(product?.variantes)) {
+    return [];
+  }
+
+  return product.variantes.filter((variant) => (
+    variant
+    && typeof variant.id === 'string'
+    && typeof variant.nombre === 'string'
+    && typeof variant.color === 'string'
+    && typeof variant.imagen === 'string'
+    && variant.imagen.trim()
+    && variant.disponible === true
+  ));
+}
+
+function getVariant(product, variantId) {
+  return getAvailableVariants(product).find(({ id }) => id === variantId);
+}
+
+function selectionMatches(item, productId, variantId) {
+  return item.id === productId && (item.variantId || null) === (variantId || null);
+}
+
+function selectionActionAttributes(productId, variantId) {
+  return `data-product-id="${productId}"${variantId ? ` data-variant-id="${variantId}"` : ''}`;
+}
+
 function loadSelection() {
   try {
     const storedSelection = JSON.parse(window.localStorage.getItem(SELECTION_STORAGE_KEY) || '[]');
@@ -100,11 +134,12 @@ function loadSelection() {
       return [];
     }
 
-    return storedSelection.filter((item) => (
-      productos.some((product) => product.id === item.id)
-      && Number.isInteger(item.quantity)
-      && item.quantity > 0
-    ));
+    return storedSelection.filter((item) => {
+      const product = getProduct(item.id);
+      const variantIsValid = !item.variantId || Boolean(getVariant(product, item.variantId));
+
+      return product && variantIsValid && Number.isInteger(item.quantity) && item.quantity > 0;
+    });
   } catch {
     return [];
   }
@@ -124,7 +159,7 @@ function saveSelection() {
 
 function selectionTotalValue() {
   return selection.reduce((total, item) => {
-    const product = productos.find(({ id }) => id === item.id);
+    const product = getProduct(item.id);
     return product ? total + priceValue(product.precio) * item.quantity : total;
   }, 0);
 }
@@ -150,25 +185,33 @@ function renderSelection() {
   }
 
   selectionItems.innerHTML = selection.map((item) => {
-    const product = productos.find(({ id }) => id === item.id);
+    const product = getProduct(item.id);
 
     if (!product) {
       return '';
     }
 
+    const variant = getVariant(product, item.variantId);
+    const productImage = variant?.imagen || product.imagen;
+    const colorDetail = variant
+      ? `<p class="selection-item__variant"><span style="--variant-color: ${variant.color}" aria-hidden="true"></span>Color: ${variant.nombre}</p>`
+      : '';
+    const actionAttributes = selectionActionAttributes(product.id, variant?.id);
+
     return `
       <li class="selection-item">
-        <img src="${product.imagen}" alt="" />
+        <img src="${productImage}" alt="" />
         <div class="selection-item__details">
           <h3>${product.nombre}</h3>
           <p>${product.precio}</p>
-          <div class="selection-item__controls" aria-label="Cantidad de ${product.nombre}">
-            <button type="button" data-selection-action="decrease" data-product-id="${product.id}" aria-label="Quitar una unidad de ${product.nombre}">−</button>
+          ${colorDetail}
+          <div class="selection-item__controls" aria-label="Cantidad de ${product.nombre}${variant ? `, color ${variant.nombre}` : ''}">
+            <button type="button" data-selection-action="decrease" ${actionAttributes} aria-label="Quitar una unidad de ${product.nombre}${variant ? `, color ${variant.nombre}` : ''}">−</button>
             <span>${item.quantity}</span>
-            <button type="button" data-selection-action="increase" data-product-id="${product.id}" aria-label="Agregar una unidad de ${product.nombre}">+</button>
+            <button type="button" data-selection-action="increase" ${actionAttributes} aria-label="Agregar una unidad de ${product.nombre}${variant ? `, color ${variant.nombre}` : ''}">+</button>
           </div>
         </div>
-        <button class="selection-item__remove" type="button" data-selection-action="remove" data-product-id="${product.id}">Eliminar</button>
+        <button class="selection-item__remove" type="button" data-selection-action="remove" ${actionAttributes}>Eliminar</button>
       </li>
     `;
   }).join('');
@@ -181,13 +224,13 @@ function renderSelection() {
   selectionTotal.textContent = formatTotal(total);
 }
 
-function updateSelection(productId, amount) {
-  const item = selection.find(({ id }) => id === productId);
+function updateSelection(productId, variantId, amount) {
+  const item = selection.find((selectionItem) => selectionMatches(selectionItem, productId, variantId));
 
   if (item) {
     item.quantity += amount;
   } else if (amount > 0) {
-    selection.push({ id: productId, quantity: amount });
+    selection.push({ id: productId, variantId: variantId || null, quantity: amount });
   }
 
   selection = selection.filter(({ quantity }) => quantity > 0);
@@ -237,8 +280,11 @@ function closeSelection() {
 
 function sendSelectionToWhatsApp() {
   const orderLines = selection.map((item) => {
-    const product = productos.find(({ id }) => id === item.id);
-    const variantNote = hasVariantToCoordinate(product) ? '\n  Variante/color: a coordinar' : '';
+    const product = getProduct(item.id);
+    const variant = getVariant(product, item.variantId);
+    const variantNote = variant
+      ? ` — ${variant.nombre}`
+      : hasVariantToCoordinate(product) ? '\n  Variante/color: a coordinar' : '';
     return `• ${item.quantity} × ${product.nombre} — ${product.precio}${variantNote}`;
   });
   const message = `Hola! 💌 Quiero hacer este pedido en Hoshi:\n\n${orderLines.join('\n')}\n\nTotal: ${formatTotal(selectionTotalValue())}\n\n¿Coordinamos? ✨`;
@@ -246,25 +292,62 @@ function sendSelectionToWhatsApp() {
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
 }
 
+const selectedVariants = new Map();
+
+function selectedVariantFor(product) {
+  const variants = getAvailableVariants(product);
+  const selectedVariant = getVariant(product, selectedVariants.get(product.id));
+
+  return selectedVariant || variants[0] || null;
+}
+
+function colorOptionsMarkup(product, selectedVariant) {
+  const variants = getAvailableVariants(product);
+
+  if (!variants.length) {
+    return '';
+  }
+
+  return `
+    <div class="product-card__colors" role="radiogroup" aria-label="Elegí el color de ${product.nombre}">
+      ${variants.map((variant) => `
+        <button
+          class="product-card__color${variant.id === selectedVariant?.id ? ' is-selected' : ''}"
+          type="button"
+          role="radio"
+          aria-checked="${String(variant.id === selectedVariant?.id)}"
+          aria-label="${variant.nombre}${variant.id === selectedVariant?.id ? ', seleccionado' : ''}"
+          data-select-variant="${variant.id}"
+          data-product-id="${product.id}"
+          style="--variant-color: ${variant.color}"
+        ><span aria-hidden="true"></span></button>
+      `).join('')}
+    </div>
+  `;
+}
+
 function productMarkup(product, type = 'catalog') {
   const variant = featuredVariants[product.id] || 'brick';
   const extraClass = type === 'featured' ? ` product-card--${variant}` : '';
+  const selectedVariant = selectedVariantFor(product);
+  const productImage = selectedVariant?.imagen || product.imagen;
   const information = product.informacion.length
     ? `<p class="product-card__description">${product.informacion.join('<br>')}</p>`
     : '';
 
   return `
     <article class="product-card${extraClass}" data-product-id="${product.id}">
-      <div class="product-card__image" data-image-path="${product.imagen}">
-        <img class="product-card__photo" src="${product.imagen}" alt="${product.nombre}" />
+      <div class="product-card__image" data-image-path="${productImage}">
+        <img class="product-card__photo" src="${productImage}" alt="${product.nombre}${selectedVariant ? `, color ${selectedVariant.nombre}` : ''}" />
         <span class="product-card__shape" aria-hidden="true"></span>
       </div>
       <div class="product-card__info">
         <h3>${product.nombre}</h3>
         <p class="product-card__price">${formatPrice(product.precio)}</p>
         ${information}
+        ${colorOptionsMarkup(product, selectedVariant)}
         <div class="product-card__actions">
-          <button class="product-card__button product-card__button--want" type="button" data-add-product="${product.id}">Lo quiero +</button>
+          <button class="product-card__button product-card__button--want" type="button" data-add-product="${product.id}"${selectedVariant ? ` data-variant-id="${selectedVariant.id}"` : ''}>Lo quiero +</button>
         </div>
       </div>
     </article>
@@ -290,11 +373,48 @@ renderSelectionVisibility();
 
 document.addEventListener('click', (event) => {
   const addButton = event.target.closest('[data-add-product]');
+  const variantButton = event.target.closest('[data-select-variant]');
   const selectionAction = event.target.closest('[data-selection-action]');
+
+  if (variantButton) {
+    const product = getProduct(variantButton.dataset.productId);
+    const variant = getVariant(product, variantButton.dataset.selectVariant);
+
+    if (variant) {
+      selectedVariants.set(product.id, variant.id);
+      document.querySelectorAll(`.product-card[data-product-id="${product.id}"]`).forEach((card) => {
+        const image = card.querySelector('.product-card__photo');
+        const addToSelectionButton = card.querySelector('[data-add-product]');
+
+        if (image) {
+          image.classList.remove('is-unavailable');
+          image.classList.add('is-changing');
+          window.setTimeout(() => {
+            const revealImage = () => image.classList.remove('is-changing');
+            image.addEventListener('load', revealImage, { once: true });
+            image.addEventListener('error', revealImage, { once: true });
+            image.src = variant.imagen;
+            image.alt = `${product.nombre}, color ${variant.nombre}`;
+          }, 40);
+        }
+
+        card.querySelector('.product-card__image')?.setAttribute('data-image-path', variant.imagen);
+        addToSelectionButton?.setAttribute('data-variant-id', variant.id);
+        card.querySelectorAll('[data-select-variant]').forEach((button) => {
+          const isSelected = button.dataset.selectVariant === variant.id;
+          button.classList.toggle('is-selected', isSelected);
+          button.setAttribute('aria-checked', String(isSelected));
+          button.setAttribute('aria-label', `${button.dataset.selectVariant === variant.id ? variant.nombre : getVariant(product, button.dataset.selectVariant)?.nombre}${isSelected ? ', seleccionado' : ''}`);
+        });
+      });
+    }
+
+    return;
+  }
 
   if (addButton) {
     event.preventDefault();
-    updateSelection(addButton.dataset.addProduct, 1);
+    updateSelection(addButton.dataset.addProduct, addButton.dataset.variantId || null, 1);
     showSelectionToast();
     return;
   }
@@ -304,13 +424,14 @@ document.addEventListener('click', (event) => {
   }
 
   const productId = selectionAction.dataset.productId;
+  const variantId = selectionAction.dataset.variantId || null;
 
   if (selectionAction.dataset.selectionAction === 'increase') {
-    updateSelection(productId, 1);
+    updateSelection(productId, variantId, 1);
   } else if (selectionAction.dataset.selectionAction === 'decrease') {
-    updateSelection(productId, -1);
+    updateSelection(productId, variantId, -1);
   } else if (selectionAction.dataset.selectionAction === 'remove') {
-    selection = selection.filter(({ id }) => id !== productId);
+    selection = selection.filter((item) => !selectionMatches(item, productId, variantId));
     saveSelection();
     renderSelection();
   }
