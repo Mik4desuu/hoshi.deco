@@ -9,6 +9,83 @@
     />
     <title>Hoshi.deco | Decoración con personalidad</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Ajustes exclusivos del hero simplificado. */
+      .hero {
+        z-index: 1;
+        overflow: hidden;
+        padding: clamp(2.6rem, 9vw, 4.8rem) 0 clamp(2.35rem, 8vw, 4.2rem);
+      }
+
+      .hero .container {
+        display: flex;
+        min-height: 0;
+        justify-content: center;
+        gap: 0;
+        text-align: center;
+      }
+
+      .hero__content {
+        width: min(100%, 45rem);
+      }
+
+      .hero h1 {
+        max-width: 11ch;
+        margin-right: auto;
+        margin-left: auto;
+        font-size: clamp(2.8rem, 13vw, 6.5rem);
+      }
+
+      .hero__intro {
+        margin: 0 auto;
+      }
+
+      .hero__decorations {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .hero__decorations .hero__sticker {
+        display: grid;
+        width: clamp(2.7rem, 12vw, 4.25rem);
+        aspect-ratio: 1;
+        place-items: center;
+      }
+
+      .hero__decorations .hero__sticker--star {
+        z-index: 3;
+        top: -1.8rem;
+        right: 0.5rem;
+        background: var(--yellow);
+        color: var(--red);
+        font-size: clamp(1.35rem, 6vw, 2.1rem);
+        transform: rotate(12deg);
+      }
+
+      .hero__decorations .hero__sticker--smile {
+        z-index: 1;
+        top: -1.35rem;
+        bottom: auto;
+        left: -0.45rem;
+        background: var(--cream);
+        color: var(--red);
+        font-size: clamp(1.35rem, 6vw, 2.1rem);
+        transform: rotate(-12deg);
+      }
+
+      .product-worlds {
+        padding-top: clamp(2.55rem, 7vw, 4rem);
+      }
+
+      @media (min-width: 620px) {
+        .hero h1 {
+          max-width: 13ch;
+          font-size: clamp(4rem, 7vw, 6.5rem);
+        }
+      }
+    </style>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -105,25 +182,15 @@
       <section class="hero" id="inicio" aria-labelledby="hero-title">
         <div class="container">
           <div class="hero__content">
-            <p class="hero__eyebrow">Hogar, pero jamás aburrido</p>
             <h1 id="hero-title">Ser aburrido no combina con tu casa</h1>
             <p class="hero__intro">
               Objetos con color, humor y personalidad para hacer tu espacio un poco
               más vos.
             </p>
-            <div class="hero__actions">
-              <a class="hero__button hero__button--primary" href="#catalogo">
-                Ver catálogo
-              </a>
-            </div>
           </div>
-
-          <div class="hero__visual">
-            <img class="hero__photo" src="assets/images/florero lego.jpg" alt="Florero Lego de Hoshi.deco" />
-            <span class="hero__sticker hero__sticker--star" aria-hidden="true">✦</span>
-            <span class="hero__sticker hero__sticker--smile" aria-hidden="true">✿</span>
-            <span class="hero__scribble" aria-hidden="true"></span>
-            <p class="hero__visual-note">Color para<br />vivir lindo</p>
+          <div class="hero__decorations" aria-hidden="true">
+            <span class="hero__sticker hero__sticker--star">✦</span>
+            <span class="hero__sticker hero__sticker--smile">✿</span>
           </div>
         </div>
       </section>
